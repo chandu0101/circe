@@ -83,6 +83,7 @@ lazy val root = project.in(file("."))
     parse, parseJS,
     tests, testsJS,
     jawn,
+    optics,
     async,
     benchmark
   )
@@ -181,6 +182,18 @@ lazy val jawn = project
   .settings(allSettings)
   .settings(
     libraryDependencies += "org.spire-math" %% "jawn-parser" % "0.8.3"
+  )
+  .dependsOn(core)
+
+lazy val optics = project
+  .settings(
+    description := "circe optics",
+    moduleName := "circe-optics"
+  )
+  .settings(allSettings)
+  .settings(noPublishSettings)
+  .settings(
+    libraryDependencies += "com.github.julien-truffaut" %% "monocle-core" % "1.2.0-M1"
   )
   .dependsOn(core)
 
