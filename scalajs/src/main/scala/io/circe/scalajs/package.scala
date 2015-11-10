@@ -61,7 +61,7 @@ package object scalajs {
   /**
    * @group Decoding
    */
-  implicit def decodeJSUndeinfed[A](implicit d: Decoder[A]): Decoder[js.UndefOr[A]] =
+  implicit def decodeJSUndefined[A](implicit d: Decoder[A]): Decoder[js.UndefOr[A]] =
     Decoder.withReattempt { a =>
       a.success.fold[Result[js.UndefOr[A]]](Xor.right(js.undefined)) { valid =>
         if (valid.focus.isUndefined) Xor.right(js.undefined) else d(valid).fold[Result[js.UndefOr[A]]](
