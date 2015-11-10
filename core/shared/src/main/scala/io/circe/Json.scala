@@ -20,6 +20,7 @@ sealed abstract class Json extends Product with Serializable {
    */
   def fold[X](
     jsonNull: => X,
+    jsonUnit: => X,
     jsonBoolean: Boolean => X,
     jsonNumber: JsonNumber => X,
     jsonString: String => X,
@@ -27,6 +28,7 @@ sealed abstract class Json extends Product with Serializable {
     jsonObject: JsonObject => X
   ): X = this match {
     case JNull       => jsonNull
+    case JUndefined  => jsonUnit
     case JBoolean(b) => jsonBoolean(b)
     case JNumber(n)  => jsonNumber(n)
     case JString(s)  => jsonString(s)
@@ -43,6 +45,7 @@ sealed abstract class Json extends Product with Serializable {
     jsonObject: JsonObject => X
   ): X = this match {
     case JNull       => or
+    case JUndefined  => or
     case JBoolean(_) => or
     case JNumber(_)  => or
     case JString(_)  => or
@@ -61,6 +64,7 @@ sealed abstract class Json extends Product with Serializable {
   def hcursor: HCursor = Cursor(this).hcursor
 
   def isNull: Boolean = false
+  def isUndefined: Boolean = false
   def isBoolean: Boolean = false
   def isNumber: Boolean = false
   def isString: Boolean = false
@@ -91,6 +95,7 @@ sealed abstract class Json extends Product with Serializable {
   def name: String =
     this match {
       case JNull       => "Null"
+      case JUndefined  => "Unit"
       case JBoolean(_) => "Boolean"
       case JNumber(_)  => "Number"
       case JString(_)  => "String"
@@ -175,6 +180,9 @@ object Json {
   private[circe] case object JNull extends Json {
     override def isNull: Boolean = true
   }
+  private[circe] case object JUndefined extends Json {
+    override def isUndefined: Boolean = true
+  }
   private[circe] final case class JBoolean(b: Boolean) extends Json {
     override def isBoolean: Boolean = true
     override def asBoolean: Option[Boolean] = Some(b)
@@ -202,8 +210,10 @@ object Json {
   }
 
   def empty: Json = Empty
+  def undefined: Json = Undefined
 
   val Empty: Json = JNull
+  val Undefined: Json = JUndefined
   val True: Json = JBoolean(true)
   val False: Json = JBoolean(false)
 

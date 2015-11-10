@@ -54,6 +54,7 @@ final case class Printer(
   private[this] val commaText = ","
   private[this] val colonText = ":"
   private[this] val nullText = "null"
+  private[this] val undefinedText = "undefined"
   private[this] val trueText = "true"
   private[this] val falseText = "false"
   private[this] val stringEnclosureText = "\""
@@ -159,7 +160,7 @@ final case class Printer(
 
           items.foreach {
             case (key, value) =>
-              if (!dropNullKeys || !value.isNull) {
+              if (!value.isUndefined || !dropNullKeys || !value.isNull) {
                 if (!first) {
                   builder.append(p.objectCommas)
                 }
@@ -193,6 +194,7 @@ final case class Printer(
           builder.append(p.rBrackets)
         }
         case JNull => builder.append(nullText)
+        case JUndefined => builder.append(undefinedText)
       }
     }
 

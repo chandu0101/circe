@@ -86,6 +86,7 @@ trait ArbitraryInstances {
   implicit def shrinkJson: Shrink[Json] = Shrink(
     _.fold(
       Stream.empty,
+      Stream.empty,
       _ => Stream.empty,
       n => shrinkJsonNumber.shrink(n).map(JNumber(_)),
       s => Shrink.shrinkString.shrink(s).map(JString(_)),
